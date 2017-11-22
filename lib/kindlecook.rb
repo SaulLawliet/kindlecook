@@ -36,6 +36,8 @@ class KindleCook
   def cook(format)
     if ARGV.include?('-c')
       FileUtils.rm_rf(workspace)
+    else
+      FileUtils.rm_rf("#{workspace}/sections")
     end
 
     FileUtils.mkdir_p("#{workspace}/articles")
@@ -72,8 +74,9 @@ class KindleCook
 
   def build_sections
     sections = YAML::load_file "sections.yml"
-
     sections.select! { |s| !s[:articles].empty? }
+    raise "Sections can't be empty!" if sections.empty?
+
     sections.each_with_index do |section, section_index|
       dir = "sections/%03d" % section_index
       FileUtils.mkdir_p("#{dir}")
@@ -108,8 +111,12 @@ class KindleCook
     file = "images/#{file_name}"
     file += ".jpg" if file.index(".").nil?
     if (not File.exist?(file)) || File.zero?(file)
-      fetch_file(url, file)
-      run_shell("convert #{file} -background white -flatten #{file}")
+      begin
+        fetch_file(url, file)
+        run_shell("convert #{file} -background white -flatten #{file}")
+      rescue
+        $stderr.puts "Error: #{url}"
+      end
     end
     file
   end
@@ -129,13 +136,20 @@ class KindleCook
 
   def absolute_url(url)
     return url if url.start_with?("http://") || url.start_with?("https://")
-    return "#{URI(root_url).scheme}#{url}" if url.start_with?("//")
-    return "#{root_url}#{url}" if url.start_with?("/")
-    return "#{root_url}/#{url}"
+    return "#{root_url}/#{url}" unless url.start_with?("/")
+
+    uri = URI(root_url)
+    return "#{uri.scheme}#{url}" if url.start_with?("//")
+    return "#{uri.scheme}://#{uri.host}#{url}"
+  end
+
+  def interval
+    0
   end
 
   @@UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.133 Safari/537.36"
   def fetch(url)
+    sleep(interval)
     url = absolute_url(url)
     $stdout.puts "Downloading: #{url}"
     open(url, "User-Agent" => @@UA).read

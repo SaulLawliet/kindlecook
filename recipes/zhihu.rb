@@ -3,12 +3,12 @@ require 'kindlecook'
 
 class Zhihu < KindleCook
   def initialize()
-    id = ARGV[0]
-    if id.nil? || id.empty?
+    argv = ARGV.select { |arg| not arg.start_with?("-") }
+    if argv.empty?
       $stderr.puts "You should specify an ID."
       raise RuntimeError
     end
-    @id = id
+    @id = argv[0]
   end
 
   def root_url
