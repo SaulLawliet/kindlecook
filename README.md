@@ -15,10 +15,11 @@
 
 # 已有 recipes
 
-| recipe | 介绍 |
-|---|---|
-| [sicp.rb](recipes/sicp.rb)   | https://mitpress.mit.edu/sicp/ |
-| [zhihu.rb](recipes/zhihu.rb) | 知乎专栏 需要指定ID |
+| recipe | 介绍 | 参数 |
+|---|---|---|
+| [sicp.rb](recipes/sicp.rb)                               | [Structure and Interpretation of Computer Programs](https://mitpress.mit.edu/sicp/) | 无 |
+| [zhihu.rb](recipes/zhihu.rb)                             | [知乎专栏](https://zhuanlan.zhihu.com/) | 专栏ID[必选] |
+| [voa_learningenglish.rb](recipes/voa_learningenglish.rb) | [VOA Leanning English - Level One](https://learningenglish.voanews.com/z/4693) | 终止日期[可选] |
 
 ## 制作好的图书
 - [Drive](https://drive.google.com/drive/folders/1zrSwnKffuSPfLzn_oWv_HDLqCBJqAs33)
