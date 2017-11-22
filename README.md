@@ -8,10 +8,11 @@
 
 # 如何制作 recipe
 主要实现以下几个方法，其中`prepare`必须要实现，具体可以参考[recipes/sicp.rb](recipes/sicp.rb)  
-- `prepare`：返回图书的目录结构，同时通过调用`save_article`将网页的`body`保存下来  
+- `prepare`：返回图书的目录结构，同时通过调用`save_article`来保存网页上必要的内容  
 - `root_url`：当页面或图片的路径为相对路径时，会需要通过这个转换成绝对路径  
 - `document`：设置图书的元信息，默认为空  
-- `slug`：图书的唯一标示，默认为类名  
+- `slug`：图书的唯一标示，默认为类名  
+- `interval`: 抓取数据的间隔, 默认为0s  
 
 # 已有 recipes
 
