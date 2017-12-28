@@ -25,29 +25,37 @@ class VOALearningEnglish < KindleCook
     section = nil
     last_date = nil
 
-    # Level One
-    html = fetch_html("https://learningenglish.voanews.com/z/4693?p=4") # 12 * 5
-    @title = html.at_css(".pg-title").text()
-    html.css(".content-body .content").each do |div|
-      date = Date.parse(div.at_css(".date").text())
-      break if (not @end_date.nil?) and @end_date > date
-      if last_date.nil? || last_date != date
-        sections.push(section) unless section.nil?
-        section = {:title => date.to_s, :articles => []}
-        last_date = date
+    # 4693: Level One
+    stop = false
+    (0..4).each do |page|
+      html = fetch_html("#{root_url}/z/4693?p=#{page}")
+      @title = html.at_css(".pg-title").text() if page == 0
+      html.css(".content-body .content").each do |div|
+        date = Date.parse(div.at_css(".date").text())
+        if (not @end_date.nil?) and @end_date > date
+          stop = true
+          break
+        end
+        if last_date.nil? || last_date != date
+          sections.push(section) unless section.nil?
+          section = {:title => date.to_s, :articles => []}
+          last_date = date
+        end
+        a = div.at_css("a")
+        file_name = a["href"].split("/").last
+        save_article(file_name) do |f|
+          article = fetch_html(a["href"])
+          f.write(article.at_css(".pg-title"))
+          post = article.at_css(".content-offset")
+          post.search(".embed-player-only").remove  # remove mp3 player
+          post.search("#comments").remove # remove comments
+          f.write(post)
+        end
+        section[:articles].push({:title => a.at_css(".title").text(), :file => file_name})
       end
-      a = div.at_css("a")
-      file_name = a["href"].split("/").last
-      save_article(file_name) do |f|
-        article = fetch_html(a["href"])
-        f.write(article.at_css(".pg-title"))
-        post = article.at_css(".content-offset")
-        post.search(".embed-player-only").remove  # remove mp3 player
-        post.search("#comments").remove # remove comments
-        f.write(post)
-      end
-      section[:articles].push({:title => a.at_css(".title").text(), :file => file_name})
+      break if stop
     end
+
     sections.push(section) unless section.nil?
     sections
   end
