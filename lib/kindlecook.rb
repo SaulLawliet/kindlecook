@@ -129,6 +129,19 @@ class KindleCook
   end
 
   # helper
+  def articles_to_sections(articles, size=10)
+    sections = []
+    articles.each_with_index do |article, index|
+      if index % size == 0
+        sections.push({:title => "#{index+1}-#{index+size}", :articles => []})
+      end
+      if article
+        sections.last[:articles].push(article)
+      end
+    end
+    sections
+  end
+
   def run_shell(cmd)
     $stdout.puts cmd
     `#{cmd}`

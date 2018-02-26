@@ -30,13 +30,8 @@ class Zhihu < KindleCook
       i += 1
     end
 
-    sections = []
-    section = nil
+    articles = []
     posts.reverse.each_with_index do |post, index|
-      if index % 10 == 0
-        sections.push(section) unless section.nil?
-        section = {:title => "#{index+1}-#{index+10}", :articles => []}
-      end
       title = post["title"]
       file = "#{post["slug"]}.html"
 
@@ -45,11 +40,10 @@ class Zhihu < KindleCook
         f.write(post["content"])
       end
 
-      section[:articles].push({:title => title, :file => file})
+      articles.push({:title => title, :file => file})
     end
 
-    sections.push(section) unless section.nil?
-    sections
+    articles_to_sections(articles)
   end
 
   def document

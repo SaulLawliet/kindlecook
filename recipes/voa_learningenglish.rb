@@ -57,7 +57,8 @@ class VOALearningEnglish < KindleCook
     end
 
     sections.push(section) unless section.nil?
-    sections
+    # 旧在前, 新在后
+    sections.reverse
   end
 
   def document
