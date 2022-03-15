@@ -51,7 +51,7 @@ class KindleCook
 
       build_document(format)
       build_sections
-      Kindlerb.run(".")
+      Kindlerb.run(".", false, 'c0')
     end
   end
 
@@ -108,8 +108,8 @@ class KindleCook
   # save
   def save_image(url)
     file_name = url.split("/").last
-    file = "images/#{file_name}"
-    file += ".jpg" if file.index(".").nil?
+    file = "images/#{file_name}".split("?").first
+    file += ".jpg" if file.index(".").nil? # 如果没有扩展名，默认为jpg
     if (not File.exist?(file)) || File.zero?(file)
       begin
         fetch_file(url, file)
@@ -165,7 +165,7 @@ class KindleCook
     sleep(interval)
     url = absolute_url(url)
     $stdout.puts "Downloading: #{url}"
-    open(url, "User-Agent" => @@UA).read
+    URI.open(url, "User-Agent" => @@UA).read
   end
 
   def fetch_html(url, src_coding=nil)
